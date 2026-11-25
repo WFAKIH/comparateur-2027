@@ -43,4 +43,13 @@ Le coordinateur décide seul de commiter et pousser le travail de son passage, a
 - jamais de fichier sensible (`.env`, clés) ; branche `main` uniquement ; pas de `--force`, pas de réécriture d'historique ;
 - interrupteur : `etat.json` → `"commit_automatique": false` ; le push suit aussi `publication_automatique`.
 
+## E. Publication automatique (autorisation de l'utilisateur du 2026-11-25)
+Le coordinateur publie le site en ligne sans intervention :
+- voie normale : le push de `outils/automatique.js` déclenche l'export public (GitHub Action) puis le déploiement Netlify ;
+- vérification : `node outils/verifier-publication.js` (lancé par `automatique.js` après le push) contrôle que le dépôt public a reçu l'export et que le site en ligne (`SITE_URL` dans `.env`) sert l'édition du jour ;
+- secours : si le site n'est pas à jour après 10 minutes, publication directe par Netlify CLI (`node outils/publier.js`, production), si le jeton Netlify est valide ;
+- ce qui est publié est toujours `site/` tel qu'issu des règles A1–A3 et des décisions humaines : jamais de modification du site à la main pour publier ;
+- en cas d'échec de vérification ou de secours : rien n'est forcé, le rapport le signale ;
+- interrupteur : `etat.json` → `"publication_automatique": false` (ni push des données, ni secours).
+
 Chaque décision automatique porte `note_humaine` = « Décision automatique (règle A…) » et `decision_auto` = date ; le journal est écrit dans `decisions-auto.md` à côté du lot.

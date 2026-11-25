@@ -17,6 +17,7 @@ const lot = JSON.parse(fs.readFileSync(fichier, 'utf8'));
 const db = charger();
 const jour = aujourdhui();
 const journal = [];
+let nouvelles = 0; // propositions intégrées par CETTE exécution (pas celles déjà intégrées plus tôt le même jour)
 
 for (const p of lot.propositions || []) {
   if (p.integre_le) continue;
@@ -40,7 +41,7 @@ for (const p of lot.propositions || []) {
       (db.promesses_retirees = db.promesses_retirees || []).push({ ...x, 'Retirée le': jour, 'Motif du retrait': p.note_humaine || 'Source introuvable ou non probante au contrôle' });
       journal.push(`RETIRÉE ${x.ID} · ${x['Candidat']} · ${x['Promesse (reformulation fidèle)']}`);
     }
-    p.integre_le = jour;
+    p.integre_le = jour; nouvelles++;
     continue;
   }
   if (p.decision !== 'accepte') continue;
@@ -88,10 +89,10 @@ for (const p of lot.propositions || []) {
     }
     default: journal.push(`IGNORÉE ${p.id} : type « ${p.type} » à traiter à la main`); continue;
   }
-  p.integre_le = jour;
+  p.integre_le = jour; nouvelles++;
 }
 
-const integrees = (lot.propositions || []).filter(p => p.integre_le === jour).length;
+const integrees = nouvelles;
 console.log(journal.join('\n') || 'Aucune proposition acceptée à intégrer.');
 if (essai) { console.log(`\n[essai] ${integrees} proposition(s) seraient intégrées. Rien n'a été écrit.`); process.exit(0); }
 if (integrees) {

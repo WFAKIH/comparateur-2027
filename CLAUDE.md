@@ -21,7 +21,7 @@ L'utilisateur valide dans Supabase (Table Editor > vue `a_valider` ou table `pro
 2. `node outils/integrer.js mises_a_jour/AAAA-MM-JJ/propositions.json --essai` → montrer le résultat à l'utilisateur.
 3. Même commande sans `--essai`, puis `node outils/supabase.js marquer mises_a_jour/AAAA-MM-JJ/propositions.json`.
 4. Vérifier le site en aperçu local, committer (avec l'accord de l'utilisateur).
-5. `node outils/publier.js` (ou `--brouillon` pour une URL de prévisualisation) — publication sur Netlify, uniquement à la demande de l'utilisateur.
+5. Publication : automatique (push → export public → Netlify), vérifiée par `node outils/verifier-publication.js` ; en secours, `node outils/publier.js` (Netlify CLI). Le coordinateur peut publier seul (autorisation du 2026-11-25, section E de `equipe/POLITIQUE_VALIDATION.md`).
 
 Validation en masse : `node outils/decider.js <lot.json> (--liste | accepte|refuse|a_valider (--recommandees | 001 …) | chercher | auto) [--essai]`.
 Règle « sourcée = validée » (décidée par l'utilisateur le 2026-11-25) : un contrôle de promesse existante (`controle_promesse`) dont `chercher` a retrouvé la source (niveau « trouvee », vérification « confirme », et pour une page web passage retrouvé sur la capture) est accepté automatiquement (`note_humaine` = « Validée automatiquement… », champ `decision_auto`). Les pistes, les sources non trouvées et les autres types de propositions restent à valider à la main. L'intégration au site (`integrer.js`) reste une étape séparée.

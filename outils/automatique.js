@@ -85,7 +85,12 @@ async function main() {
       } catch (err) { log(`   Supabase : ${err.message} (décisions gardées dans le fichier)`); }
     }
   }
-  if (!totalDecides) { log('\nAucune décision automatique : rien à intégrer.'); ecrireJournaux(); return; }
+  // Décisions humaines prises dans Supabase (rapatriées par « supabase.js recuperer ») : intégrées aussi.
+  const enAttente = parLot.reduce((n, { fichier }) => n + JSON.parse(fs.readFileSync(fichier, 'utf8')).propositions
+    .filter(p => p.decision === 'accepte' && !p.integre_le).length, 0);
+  if (!enAttente) { log('\nAucune proposition acceptée à intégrer.'); ecrireJournaux(); return; }
+  if (enAttente > totalDecides) log(`\n${enAttente - totalDecides} décision(s) humaine(s) acceptée(s) à intégrer aussi.`);
+  if (enAttente > MAX_PAR_PASSAGE) arret(`${enAttente} propositions à intégrer (plafond ${MAX_PAR_PASSAGE}) : volume inhabituel, contrôle humain requis`);
 
   // 2. Intégration : essai puis réelle, lot par lot
   let integrees = 0;
@@ -134,6 +139,10 @@ async function main() {
   const pu = git('push', 'origin', 'main');
   if (pu.status !== 0) arret(`push impossible : ${pu.stderr.slice(0, 300)} (le commit local est fait)`);
   log(`Publié : commit ${git('rev-parse', '--short', 'HEAD').stdout.trim()} poussé ; export public et Netlify suivent automatiquement.`);
+  // 5. Vérification de la mise en ligne (et publication de secours si besoin)
+  const v = node(path.join('outils', 'verifier-publication.js'), '--edition', apres.meta.edition);
+  for (const l of (v.stdout || '').split('\n').filter(Boolean)) log('   ' + l);
+  if (v.status !== 0) log('   Mise en ligne NON CONFIRMÉE : à signaler dans le rapport.');
   ecrireJournaux();
   // Le journal mis à jour après le commit est inclus au passage suivant.
 }
