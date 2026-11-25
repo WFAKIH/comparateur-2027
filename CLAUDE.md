@@ -11,7 +11,10 @@ Site statique neutre et sourcé comparant les programmes des prétendants à la 
 - `equipe/` — `REGLES_COMMUNES.md` (neutralité, sources, format des propositions), `COORDINATEUR.md` (procédure quotidienne), `ARCHITECTURE.md`.
 - `mises_a_jour/AAAA-MM-JJ/` — lots quotidiens : `brut/` (sorties des agents), `propositions.json`, `rapport.md`. `mises_a_jour/etat.json` = rotation des personnalités.
 
-## Valider, intégrer, publier
+## Validation automatique (décision de l'utilisateur, 2026-11-25)
+Les propositions conformes à `equipe/POLITIQUE_VALIDATION.md` (règles A1 recommandée, A2 sourcée sur le site officiel, A3 sans incidence budgétaire) sont acceptées, intégrées, commitées et poussées (mises en ligne) sans intervention : `node outils/automatique.js <lots…> [--essai] [--sans-publication]`. Jamais de refus automatique. Interrupteurs `automatique` / `publication_automatique` dans `mises_a_jour/etat.json`. La tâche planifiée quotidienne l'exécute (étape 10 de `equipe/COORDINATEUR.md`).
+
+## Valider, intégrer, publier (décisions humaines)
 L'utilisateur valide dans Supabase (Table Editor > vue `a_valider` ou table `propositions` : colonne `decision` = accepte / refuse, `note_humaine` facultative). Quand il demande d'intégrer (« intègre les validations du 25 », « publie ») :
 1. `node outils/supabase.js recuperer mises_a_jour/AAAA-MM-JJ/propositions.json` (sans Supabase : il modifie `decision` directement dans le JSON).
 2. `node outils/integrer.js mises_a_jour/AAAA-MM-JJ/propositions.json --essai` → montrer le résultat à l'utilisateur.

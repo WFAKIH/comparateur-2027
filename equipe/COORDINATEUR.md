@@ -45,13 +45,21 @@ Soit `J` la date du jour (AAAA-MM-JJ) et `D = mises_a_jour/J`.
    - propositions infirmées (pour mémoire) ;
    - pour chaque proposition recommandée : le lien vers sa `capture.png` ;
    - veille du jour (changements d'inventaire, nouveaux sondages) ;
-   - mode d'emploi : « Pour intégrer : passer "decision" à "accepte" dans propositions.json, puis `node outils/integrer.js D/propositions.json --essai`, puis sans `--essai`. »
+   - section « Décisions automatiques » : ce que l'étape 10 va accepter (`node outils/automatique.js D/propositions.json --essai`), par règle A1/A2/A3 ; et ce qui reste à la décision humaine, avec le motif ;
+   - mode d'emploi : « Les propositions conformes à equipe/POLITIQUE_VALIDATION.md sont intégrées et publiées automatiquement. Les autres se décident dans Supabase (vue `a_valider`) ou avec `node outils/decider.js` ; elles seront intégrées au passage suivant. »
 8 bis. **Envoi pour validation** : si le fichier `.env` existe, `node outils/supabase.js envoyer D/propositions.json` (les propositions et leurs captures apparaissent dans Supabase, vue `a_valider`). En cas d'échec, le signaler dans le rapport : la validation reste possible dans le fichier JSON.
    Puis `node outils/supabase.js signalements` : résume les nouveaux signalements de visiteurs dans le rapport (section « Signalements reçus » : numéro, référence, message, source) SANS jamais recopier le champ contact (donnée personnelle) ; l'extracteur du lendemain peut s'en servir comme piste, jamais comme source.
-9. **État** : mets à jour `mises_a_jour/etat.json` : `prochain_index` avancé de `lot_quotidien` (modulo), `dernier_passage = J`, ajoute à `historique` `{date, personnalites, propositions, confirmees}`.
-10. Termine par un résumé de 4 lignes.
+9. **État** : mets à jour `mises_a_jour/etat.json` : `prochain_index` avancé de `lot_quotidien` (modulo), `dernier_passage = J`, ajoute à `historique` `{date, personnalites, propositions, confirmees, integrees_auto}`.
+9 bis. **Sources des contrôles en attente** : pour chaque lot `mises_a_jour/*-controle/propositions.json` qui a encore des contrôles « a_valider », `node outils/decider.js <lot> chercher --limite 30 --sans-auto` (exploration polie, cache 7 jours). Signale dans le rapport les sites qui ont refusé l'accès.
+10. **Validation, intégration et publication automatiques** (décision de l'utilisateur du 2026-11-25, `equipe/POLITIQUE_VALIDATION.md`) :
+   `node outils/automatique.js D/propositions.json <autres lots ayant des propositions a_valider ou acceptées non intégrées : *-controle, *-chiffrage, lots des jours précédents>`
+   Le script accepte selon les règles A1–A3 (jamais de refus), intègre (essai puis réel), marque Supabase, contrôle la cohérence, commite et pousse (mise en ligne). Il intègre aussi les décisions humaines prises entre-temps dans Supabase : lance d'abord `node outils/supabase.js recuperer <lot>` pour chaque lot.
+   S'il s'arrête (« ARRÊT »), ne force rien : recopie le motif dans le rapport ; rien n'est publié.
+11. Termine par un résumé de 4 lignes : propositions par type, combien confirmées, combien intégrées automatiquement, points laissés à la décision humaine.
 
 ## Garde-fous
 - Si un agent échoue ou ne rend rien, continue avec les autres et signale-le dans le rapport.
-- N'accepte jamais toi-même une proposition (`decision` reste `a_valider`). L'intégration est une décision humaine.
-- N'exécute jamais `outils/integrer.js` sans `--essai`.
+- Ne prends jamais toi-même de décision hors de `outils/automatique.js` : pas de `decider.js accepte|refuse`, pas d'édition de `decision` à la main. Ce qui ne passe pas la politique reste « a_valider ».
+- N'exécute `outils/integrer.js` sans `--essai` que via `outils/automatique.js`. Ne modifie jamais `site/` à la main.
+- Jamais de refus ni de retrait automatique d'une promesse.
+- Interrupteurs : `etat.json` → `automatique` et `publication_automatique` ; s'ils sont à `false`, s'arrêter au rapport.

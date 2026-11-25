@@ -29,7 +29,7 @@ Langue : français.
 - Jamais d'addition de montants de périodes ou de natures différentes. Proposition budgétaire dont le coût n'est pas chiffré par la source → pas de « Valeur Md€ », « Nature du chiffrage » = « Non chiffré ».
 
 ## Fichiers
-- Les agents n'écrivent JAMAIS dans `site/`. Seul `outils/integrer.js` modifie les données, après décision humaine.
+- Les agents n'écrivent JAMAIS dans `site/`. Seul `outils/integrer.js` modifie les données, après décision humaine ou décision automatique conforme à `equipe/POLITIQUE_VALIDATION.md` (via `outils/automatique.js`).
 - Lire les données uniquement via node (data.js fait ~450 Ko) :
   `node -e "global.window={};require('<PROJET>/site/data.js');const D=window.DATA_2027; …"`
 - Couverture : `node outils/couverture.js [--candidat "Nom"] [--json]`
