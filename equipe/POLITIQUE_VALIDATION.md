@@ -50,6 +50,7 @@ Le coordinateur publie le site en ligne sans intervention :
 - secours : si le site n'est pas à jour après 10 minutes, publication directe par Netlify CLI (`node outils/publier.js`, production), si le jeton Netlify est valide ;
 - ce qui est publié est toujours `site/` tel qu'issu des règles A1–A3 et des décisions humaines : jamais de modification du site à la main pour publier ;
 - en cas d'échec de vérification ou de secours : rien n'est forcé, le rapport le signale ;
-- interrupteur : `etat.json` → `"publication_automatique": false` (ni push des données, ni secours).
+- interrupteur : `etat.json` → `"publication_automatique": false` (ni push des données, ni secours) ;
+- **accès au site** : depuis le 2026-11-25, le site (https://quelpresident2027.netlify.app) est volontairement réservé à l'équipe Netlify (protection « Visitor access »), par décision de l'utilisateur. Ne jamais modifier ce réglage : l'ouverture au public est une décision humaine. La vérification se fait alors par l'API Netlify (déploiement publié = dernier commit public).
 
 Chaque décision automatique porte `note_humaine` = « Décision automatique (règle A…) » et `decision_auto` = date ; le journal est écrit dans `decisions-auto.md` à côté du lot.
