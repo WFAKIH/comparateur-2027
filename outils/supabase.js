@@ -28,7 +28,7 @@ async function api(chemin, { method = 'GET', corps, entetes = {}, brut } = {}) {
   if (!configure()) throw new Error('SUPABASE_URL ou SUPABASE_SERVICE_ROLE_KEY manquant dans .env');
   const r = await fetch(URL_SB + chemin, {
     method,
-    headers: { apikey: CLE, Authorization: `Bearer ${CLE}`, ...(brut ? {} : { 'Content-Type': 'application/json' }), ...entetes },
+    headers: { apikey: CLE, ...(CLE.startsWith('sb_') ? {} : { Authorization: `Bearer ${CLE}` }), ...(brut ? {} : { 'Content-Type': 'application/json' }), ...entetes },
     body: brut ?? (corps === undefined ? undefined : JSON.stringify(corps)),
   });
   const texte = await r.text();

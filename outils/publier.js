@@ -1,5 +1,6 @@
 // Génère site/config.js à partir de .env puis publie le dossier site/ sur Netlify.
-// Usage : node outils/publier.js [--brouillon]   (--brouillon : URL de prévisualisation, sans toucher au site en ligne)
+// Usage : node outils/publier.js --config   (génère seulement site/config.js — cas normal : Netlify publie depuis GitHub)
+//         node outils/publier.js [--brouillon] (publication directe par Netlify CLI, en secours)   (--brouillon : URL de prévisualisation, sans toucher au site en ligne)
 'use strict';
 const fs = require('fs');
 const path = require('path');
@@ -8,6 +9,13 @@ const { RACINE } = require('./donnees');
 const { env } = require('./supabase');
 
 function ecrireConfig() {
+  // Garde-fou : la clé écrite dans site/config.js est publique ; refuser toute clé secrète.
+  const cle = env.SUPABASE_ANON_KEY || '';
+  let role = '';
+  try { role = JSON.parse(Buffer.from(cle.split('.')[1] || '', 'base64url').toString()).role || ''; } catch { /* clé non JWT */ }
+  if (cle.startsWith('sb_secret_') || role === 'service_role') {
+    throw new Error('SUPABASE_ANON_KEY contient une clé SECRÈTE : mettre la clé publique (publishable ou anon).');
+  }
   const config = {
     supabaseUrl: (env.SUPABASE_URL || '').replace(/\/$/, ''),
     // Clé « anon » : publique par conception, elle ne permet que de déposer un signalement (RLS).
@@ -23,6 +31,10 @@ function ecrireConfig() {
 if (require.main === module) {
   const config = ecrireConfig();
   console.log(`config.js généré (signalements : ${config.supabaseAnonKey ? 'actifs' : 'inactifs'}, tours : ${config.tours.join(', ') || 'non renseignés'})`);
+  if (process.argv.includes('--config')) {
+    console.log('Netlify publie depuis GitHub : committer site/config.js puis pousser sur le dépôt privé.');
+    process.exit(0);
+  }
   if (!env.NETLIFY_AUTH_TOKEN || !env.NETLIFY_SITE_ID) {
     console.error('NETLIFY_AUTH_TOKEN ou NETLIFY_SITE_ID manquant dans .env : publication impossible.');
     process.exit(1);

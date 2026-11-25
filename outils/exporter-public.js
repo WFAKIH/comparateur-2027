@@ -46,7 +46,13 @@ function verifierSecrets(dossier) {
       if (INTERDITS.some(re => re.test(rel))) alertes.push(`chemin interdit : ${rel}`);
       if (/\.(js|json|md|txt|toml|html|sql|exemple)$/.test(n) || n.startsWith('_')) {
         const t = fs.readFileSync(f, 'utf8');
-        if (/eyJhbGciOi[\w-]{20,}\.[\w-]{20,}\.[\w-]{20,}/.test(t) && !rel.startsWith('site/config.js')) alertes.push(`jeton JWT dans ${rel}`);
+        // Seule la clé publique « anon » est tolérée, et uniquement dans site/config.js.
+        for (const jwt of t.match(/eyJ[\w-]{10,}\.[\w-]{10,}\.[\w-]{10,}/g) || []) {
+          let role = '';
+          try { role = JSON.parse(Buffer.from(jwt.split('.')[1], 'base64url').toString()).role || ''; } catch { /* illisible */ }
+          if (role !== 'anon' || rel !== 'site/config.js') alertes.push(`jeton JWT (${role || 'inconnu'}) dans ${rel}`);
+        }
+        if (/sb_secret_[A-Za-z0-9_-]{10,}/.test(t)) alertes.push(`clé secrète Supabase dans ${rel}`);
         if (/nfp_[A-Za-z0-9]{20,}/.test(t)) alertes.push(`jeton Netlify dans ${rel}`);
         if (/gh[pousr]_[A-Za-z0-9]{30,}|github_pat_[A-Za-z0-9_]{30,}/.test(t)) alertes.push(`jeton GitHub dans ${rel}`);
         if (/[A-Za-z]:[\\/]+Users[\\/]+(?!<)/.test(t)) alertes.push(`chemin local (nom de compte) dans ${rel}`);

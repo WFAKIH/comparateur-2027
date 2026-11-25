@@ -176,7 +176,7 @@
       if(!CFG.supabaseUrl||!CFG.supabaseAnonKey){etat.textContent='Le formulaire n’est pas encore actif sur cette version du site.';return;}
       const btn=form.querySelector('button[type=submit]');btn.disabled=true;etat.textContent='Envoi…';
       try{
-        const r=await fetch(`${CFG.supabaseUrl}/rest/v1/signalements`,{method:'POST',headers:{'Content-Type':'application/json',apikey:CFG.supabaseAnonKey,Authorization:`Bearer ${CFG.supabaseAnonKey}`,Prefer:'return=minimal'},body:JSON.stringify(corps)});
+        const r=await fetch(`${CFG.supabaseUrl}/rest/v1/signalements`,{method:'POST',headers:{'Content-Type':'application/json',apikey:CFG.supabaseAnonKey,...(CFG.supabaseAnonKey.startsWith('sb_')?{}:{Authorization:`Bearer ${CFG.supabaseAnonKey}`}),Prefer:'return=minimal'},body:JSON.stringify(corps)});
         if(!r.ok) throw new Error(r.status);
         form.reset();etat.textContent='Merci, votre signalement a bien été transmis. Il sera vérifié avant toute correction.';
       }catch{etat.textContent='L’envoi a échoué. Réessayez plus tard.';}
