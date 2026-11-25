@@ -19,7 +19,23 @@ const jour = aujourdhui();
 const journal = [];
 
 for (const p of lot.propositions || []) {
-  if (p.decision !== 'accepte' || p.integre_le) continue;
+  if (p.integre_le) continue;
+  // Contrôle d'une promesse existante : « accepte » = confirmée, « refuse » = retirée du site (conservée dans promesses_retirees).
+  if (p.type === 'controle_promesse' && ['accepte', 'refuse'].includes(p.decision)) {
+    const i = db.promesses.findIndex(y => y.ID === p.id_existant);
+    if (i < 0) { journal.push(`IGNORÉE ${p.id} : ${p.id_existant} introuvable`); continue; }
+    if (p.decision === 'accepte') {
+      db.promesses[i]['Date contrôle'] = jour;
+      journal.push(`CONFIRMÉE ${p.id_existant} · ${db.promesses[i]['Candidat']}`);
+    } else {
+      const [x] = db.promesses.splice(i, 1);
+      (db.promesses_retirees = db.promesses_retirees || []).push({ ...x, 'Retirée le': jour, 'Motif du retrait': p.note_humaine || 'Source introuvable ou non probante au contrôle' });
+      journal.push(`RETIRÉE ${x.ID} · ${x['Candidat']} · ${x['Promesse (reformulation fidèle)']}`);
+    }
+    p.integre_le = jour;
+    continue;
+  }
+  if (p.decision !== 'accepte') continue;
   const r = valider(p, db, lot.propositions);
   if (!r.ok) { journal.push(`IGNORÉE ${p.id} : ${r.erreurs.join(' ; ')}`); continue; }
   if (!forcer && p.verification?.statut !== 'confirme') { journal.push(`IGNORÉE ${p.id} : vérification « ${p.verification?.statut || 'absente'} » (utiliser --forcer)`); continue; }

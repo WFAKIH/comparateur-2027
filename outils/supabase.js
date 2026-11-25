@@ -47,6 +47,7 @@ function resume(p) {
     case 'correction_promesse': return `Correction ${p.id_existant} · ${p.champ} : « ${p.valeur_actuelle ?? ''} » → « ${typeof v === 'object' ? JSON.stringify(v) : v} »`;
     case 'lien_mort': return `Lien mort ${p.id_existant}${v ? ' → ' + v : ''}`;
     case 'maj_inventaire': return `Inventaire ${p.id_existant || v?.['Personnalité'] || ''} · ${p.champ || 'ajout'} → ${typeof v === 'object' ? JSON.stringify(v) : v}`;
+    case 'controle_promesse': return `Contrôle ${p.id_existant} · ${p.valeur_actuelle || ''} — accepte = garder · refuse = retirer du site`;
     default: return `${p.type} · ${p.table || ''} · ${Array.isArray(v) ? v.length + ' ligne(s)' : ''}`;
   }
 }

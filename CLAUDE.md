@@ -19,6 +19,8 @@ L'utilisateur valide dans Supabase (Table Editor > vue `a_valider` ou table `pro
 4. Vérifier le site en aperçu local, committer (avec l'accord de l'utilisateur).
 5. `node outils/publier.js` (ou `--brouillon` pour une URL de prévisualisation) — publication sur Netlify, uniquement à la demande de l'utilisateur.
 
+Contrôle de la base héritée : `node outils/controle-existant.js` crée `mises_a_jour/<date>-controle/propositions.json` (type `controle_promesse`) pour les promesses sans source probante. Décision « accepte » = promesse confirmée ; « refuse » = promesse RETIRÉE du site (archivée dans `promesses_retirees` avec le motif = note_humaine). Même procédure d'intégration que les autres lots.
+
 Signalements des visiteurs : `node outils/supabase.js signalements [--tous]`. Un signalement est une piste à vérifier, jamais une source.
 Configuration : `.env` (modèle `.env.exemple`), schéma de base `supabase/schema.sql`. Ne jamais afficher ni committer la clé service_role.
 

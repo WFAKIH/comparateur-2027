@@ -6,9 +6,9 @@
 const fs = require('fs');
 const { charger, similarite } = require('./donnees');
 
-const TYPES = ['ajout_promesse', 'correction_promesse', 'lien_mort', 'maj_inventaire', 'ajout_sondage', 'ajout_vote', 'ajout_recoupement', 'autre'];
+const TYPES = ['ajout_promesse', 'correction_promesse', 'lien_mort', 'maj_inventaire', 'ajout_sondage', 'ajout_vote', 'ajout_recoupement', 'controle_promesse', 'autre'];
 const TABLES_PAR_TYPE = {
-  ajout_promesse: ['promesses'], correction_promesse: ['promesses'], lien_mort: ['promesses', 'sources'],
+  ajout_promesse: ['promesses'], correction_promesse: ['promesses'], controle_promesse: ['promesses'], lien_mort: ['promesses', 'sources'],
   maj_inventaire: ['inventaire'], ajout_sondage: ['sondages'], ajout_vote: ['votes_fr', 'votes_ue'],
   ajout_recoupement: ['recoupements', 'recoupements_plus'],
 };
@@ -22,13 +22,16 @@ function valider(prop, db, toutes) {
   if (!prop.id) err.push('id manquant');
   if (!TYPES.includes(prop.type)) err.push(`type inconnu : ${prop.type}`);
   if (TABLES_PAR_TYPE[prop.type] && !TABLES_PAR_TYPE[prop.type].includes(prop.table)) err.push(`table « ${prop.table} » incompatible avec ${prop.type}`);
-  if (!reUrl.test(prop.source_url || '')) err.push('source_url absente ou invalide');
-  if (!String(prop.citation || '').trim()) err.push('citation absente');
+  // Contrôle d'une promesse existante : c'est la décision humaine qui tranche ; pas de citation exigée.
+  const controle = prop.type === 'controle_promesse';
+  if (controle && !prop.id_existant) err.push('contrôle sans id_existant');
+  if (!controle && !reUrl.test(prop.source_url || '')) err.push('source_url absente ou invalide');
+  if (!controle && !String(prop.citation || '').trim()) err.push('citation absente');
   else if (String(prop.citation).split(/\s+/).length > 40) alerte.push('citation longue (> 40 mots)');
   if (prop.date_source && !reDate.test(prop.date_source)) err.push('date_source au mauvais format');
   if (!['haute', 'moyenne', 'faible'].includes(prop.confiance)) alerte.push('confiance non renseignée');
   const v = prop.verification || {};
-  if (v.statut !== 'confirme') alerte.push(`vérification indépendante : ${v.statut || 'absente'}`);
+  if (!controle && v.statut !== 'confirme') alerte.push(`vérification indépendante : ${v.statut || 'absente'}`);
   const n = prop.revue_neutralite || {};
   if (n.statut === 'a_reformuler') alerte.push('revue de neutralité : reformulation demandée');
 
