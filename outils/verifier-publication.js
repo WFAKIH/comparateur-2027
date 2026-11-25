@@ -30,6 +30,19 @@ async function editionEnLigne() {
   return { edition: ctx.window.DATA_2027?.meta?.edition, promesses: ctx.window.DATA_2027?.promesses?.length };
 }
 
+// Site protégé (connexion Netlify) : on vérifie par l'API que le déploiement publié
+// correspond au dernier commit du dépôt public.
+async function deploiementAJour() {
+  if (!env.NETLIFY_AUTH_TOKEN || !env.NETLIFY_SITE_ID) return { erreur: 'jeton ou Site ID Netlify absent' };
+  const s = await fetch(`https://api.netlify.com/api/v1/sites/${env.NETLIFY_SITE_ID}`, { headers: { Authorization: `Bearer ${env.NETLIFY_AUTH_TOKEN}` } });
+  if (!s.ok) return { erreur: `API Netlify HTTP ${s.status}` };
+  const site = await s.json();
+  const c = await fetch(`https://api.github.com/repos/${DEPOT_PUBLIC}/commits?per_page=1`, { headers: UA });
+  const tete = c.ok ? (await c.json())[0]?.sha : null;
+  const publie = site.published_deploy?.commit_ref;
+  return { ok: Boolean(tete && publie === tete), publie: (publie || '').slice(0, 7), tete: (tete || '').slice(0, 7), le: site.published_deploy?.published_at };
+}
+
 async function netlifyValide() {
   if (!env.NETLIFY_AUTH_TOKEN || !env.NETLIFY_SITE_ID) return false;
   const r = await fetch(`https://api.netlify.com/api/v1/sites/${env.NETLIFY_SITE_ID}`, { headers: { Authorization: `Bearer ${env.NETLIFY_AUTH_TOKEN}` } }).catch(() => null);
@@ -41,7 +54,7 @@ async function main() {
   const depuis = new Date(debut - 10 * 60 * 1000).toISOString();
   // 1. Export public
   let exporte = false;
-  while (Date.now() - debut < Math.min(attenteMs, 5 * 60 * 1000)) {
+  while (Date.now() - debut < Math.min(attenteMs / 2, 5 * 60 * 1000)) {
     const r = await fetch(`https://api.github.com/repos/${DEPOT_PUBLIC}/commits?per_page=1&since=${depuis}`, { headers: UA }).catch(() => null);
     if (r && r.ok && (await r.json()).length) { exporte = true; break; }
     await dormir(20000);
@@ -59,6 +72,15 @@ async function main() {
     if (etat.edition === edition) {
       console.log(`Site en ligne à jour : ${SITE_URL} (édition ${etat.edition}, ${etat.promesses} promesses).`);
       return;
+    }
+    if (/HTTP 40[13]/.test(etat.erreur || '')) {
+      // Accès réservé (protection Netlify) : contrôle par l'API de déploiement.
+      const d = await deploiementAJour().catch(e => ({ erreur: e.message }));
+      if (d.ok) {
+        console.log(`Site à jour (accès protégé, contrôle par l'API Netlify) : déploiement publié = dernier commit public ${d.publie}, le ${d.le}.`);
+        return;
+      }
+      etat = { erreur: d.erreur || `déploiement publié ${d.publie || '?'} ≠ dernier commit public ${d.tete || '?'} (accès protégé)` };
     }
     await dormir(30000);
   }
