@@ -27,6 +27,14 @@ for (const p of lot.propositions || []) {
     if (p.decision === 'accepte') {
       db.promesses[i]['Date contrôle'] = jour;
       journal.push(`CONFIRMÉE ${p.id_existant} · ${db.promesses[i]['Candidat']}`);
+      // Source probante trouvée ailleurs (outils/chercher-sources.js) : elle devient l'URL primaire.
+      const s = p.source_trouvee;
+      // Pour un PDF, le lien ouvre directement la bonne page (#page=N).
+      const url = s?.type === 'pdf' && s.page ? `${s.url}#page=${s.page}` : s?.url;
+      if (s?.niveau === 'trouvee' && /^https?:\/\//.test(s.url || '') && s.url !== db.promesses[i]['URL primaire'].split('#')[0]) {
+        journal.push(`LIEN ${p.id_existant} : ${db.promesses[i]['URL primaire']} → ${url}`);
+        db.promesses[i]['URL primaire'] = url;
+      }
     } else {
       const [x] = db.promesses.splice(i, 1);
       (db.promesses_retirees = db.promesses_retirees || []).push({ ...x, 'Retirée le': jour, 'Motif du retrait': p.note_humaine || 'Source introuvable ou non probante au contrôle' });

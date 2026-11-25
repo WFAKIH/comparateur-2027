@@ -47,7 +47,11 @@ function resume(p) {
     case 'correction_promesse': return `Correction ${p.id_existant} · ${p.champ} : « ${p.valeur_actuelle ?? ''} » → « ${typeof v === 'object' ? JSON.stringify(v) : v} »`;
     case 'lien_mort': return `Lien mort ${p.id_existant}${v ? ' → ' + v : ''}`;
     case 'maj_inventaire': return `Inventaire ${p.id_existant || v?.['Personnalité'] || ''} · ${p.champ || 'ajout'} → ${typeof v === 'object' ? JSON.stringify(v) : v}`;
-    case 'controle_promesse': return `Contrôle ${p.id_existant} · ${p.valeur_actuelle || ''} — accepte = garder · refuse = retirer du site`;
+    case 'controle_promesse': {
+      const s = p.source_trouvee;
+      const trouve = s ? ` · ${s.niveau === 'trouvee' ? 'SOURCE TROUVÉE' : 'piste'} (${Math.round(s.score * 100)} %) : ${s.url}${s.page ? ` p. ${s.page}` : ''}` : '';
+      return `Contrôle ${p.id_existant} · ${p.valeur_actuelle || ''}${trouve} — accepte = garder · refuse = retirer du site`;
+    }
     default: return `${p.type} · ${p.table || ''} · ${Array.isArray(v) ? v.length + ' ligne(s)' : ''}`;
   }
 }
@@ -64,11 +68,11 @@ async function envoyerCapture(p) {
   return URL_SB + '/storage/v1' + (s.signedURL || s.signedUrl);
 }
 
-async function envoyer(fichier) {
+async function envoyer(fichier, ids) {
   const lot = JSON.parse(fs.readFileSync(fichier, 'utf8'));
   const db = charger();
   const lignes = [];
-  for (const p of lot.propositions || []) {
+  for (const p of (lot.propositions || []).filter(x => !ids || ids.includes(x.id))) {
     let capture = null;
     try { capture = await envoyerCapture(p); } catch (e) { console.warn(`Capture non envoyée pour ${p.id} : ${e.message}`); }
     const derniere = [...(p.preuves || [])].reverse()[0];
@@ -76,7 +80,8 @@ async function envoyer(fichier) {
       id: p.id, lot: lot.date || p.id.slice(0, 10), agent: p.agent || null, type: p.type, table_cible: p.table || null,
       id_existant: p.id_existant || null, champ: p.champ || null, candidat: candidatDe(p, db), resume: resume(p),
       valeur_actuelle: p.valeur_actuelle ?? null, valeur_proposee: p.valeur_proposee ?? null,
-      source_url: p.source_url || null, citation: p.citation || null, date_source: p.date_source || null, confiance: p.confiance || null,
+      source_url: (p.source_trouvee?.niveau === 'trouvee' && p.source_trouvee.url) || p.source_url || null,
+      citation: p.citation || p.source_trouvee?.citation || null, date_source: p.date_source || null, confiance: p.confiance || null,
       verification: p.verification?.statut || null, verification_detail: p.verification || null,
       revue_neutralite: p.revue_neutralite || null, revue_budget: p.revue_budget || null, controle_auto: p.controle_auto || null,
       passage_trouve: derniere?.citation_trouvee || null, capture_url: capture,
@@ -151,4 +156,4 @@ if (require.main === module) {
   }
   actions[cmd]().catch(e => { console.error('Erreur : ' + e.message); process.exit(1); });
 }
-module.exports = { configure, env };
+module.exports = { configure, env, api, envoyer };

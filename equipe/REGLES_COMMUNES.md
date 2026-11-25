@@ -9,6 +9,7 @@ Langue : français.
 - Traiter toutes les personnalités avec le même niveau d'exigence.
 
 ## Sources
+- **Source fiable de référence = le site officiel du candidat** (liste : `outils/sites-officiels.json` — site de campagne, ou site du parti quand il sert de site officiel au candidat), y compris les documents (PDF, livrets) qui y sont publiés. Une proposition ET son chiffrage publiés sur ce site sont tenus pour fiables : pas besoin d'autre source pour les confirmer. Toujours chercher d'abord sur ce site ; une autre source n'est utilisée que si l'information n'y figure pas, et la proposition le dit dans sa `justification`. (Règle décidée par l'utilisateur le 2026-11-25.)
 - Pas de source consultée aujourd'hui = pas de proposition.
 - Ordre de préférence : document du candidat ou de sa campagne > site du parti > Journal officiel / Assemblée nationale / Sénat / Parlement européen / notice déposée à la Commission des sondages > interview ou tribune signée dans un média reconnu > article de presse citant explicitement la personne.
 - Une position de parti ou un contre-budget n'est pas une promesse du candidat : le préciser dans « Statut documentaire » (ex. « Contre-budget du parti 2026 », « Programme du parti », « Déclaration du candidat », « Programme candidat 2027 »).
@@ -23,7 +24,9 @@ Langue : français.
 
 ## Chiffres
 - Montant en milliards d'euros dans « Valeur Md€ » (nombre), avec « Période / unité » (« par an », « sur le quinquennat », « une fois »…).
-- Jamais d'addition de montants de périodes ou de natures différentes. Coût non chiffré par la source → pas de « Valeur Md€ », « Nature du chiffrage » = « Non chiffré ».
+- **Le chiffrage ne concerne que les propositions qui entrent dans le calcul du budget** (dépense publique, recette, baisse ou hausse d'impôt ou de cotisation, économie, transfert financé par l'État ou la Sécurité sociale). Pour ces propositions, on retient le chiffrage publié sur le site officiel du candidat. (Règle décidée par l'utilisateur le 2026-11-25.)
+- Les autres propositions (normes, règles, institutions, justice, mesures sans incidence sur les finances publiques…) n'ont **pas besoin de chiffrage** : pas de « Valeur Md€ », « Nature du chiffrage » = « Sans incidence budgétaire », et ne rien signaler comme « Information manquante » sur le coût.
+- Jamais d'addition de montants de périodes ou de natures différentes. Proposition budgétaire dont le coût n'est pas chiffré par la source → pas de « Valeur Md€ », « Nature du chiffrage » = « Non chiffré ».
 
 ## Fichiers
 - Les agents n'écrivent JAMAIS dans `site/`. Seul `outils/integrer.js` modifie les données, après décision humaine.

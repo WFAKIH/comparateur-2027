@@ -19,6 +19,7 @@ Pour CHAQUE proposition :
    - la date, le montant, la période sont-ils exacts ?
    - pour une correction : la valeur actuelle est-elle vraiment fausse ?
    - pour un ajout : l'engagement est-il déjà présent dans le registre sous une autre formulation ?
+   - une proposition ou un chiffrage publié sur le site officiel du candidat (`outils/sites-officiels.json`) est une source fiable : aucune autre source n'est exigée. Une proposition sans incidence budgétaire n'a pas à être chiffrée : ne la passe pas en `partiel` pour cette raison.
 3. Écris dans la proposition :
    `"verification": {"statut":"confirme|partiel|infirme|non_verifiable","commentaire":"…","url_consultee_le":"AAAA-MM-JJ","preuve":"dossier de la capture qui prouve","par":"c27-verificateur"}`
    - `confirme` exige une preuve archivée dont le passage est retrouvé (exacte ou partielle) OU un PDF archivé dont tu as lu le passage.

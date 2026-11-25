@@ -19,6 +19,9 @@ L'utilisateur valide dans Supabase (Table Editor > vue `a_valider` ou table `pro
 4. Vérifier le site en aperçu local, committer (avec l'accord de l'utilisateur).
 5. `node outils/publier.js` (ou `--brouillon` pour une URL de prévisualisation) — publication sur Netlify, uniquement à la demande de l'utilisateur.
 
+Validation en masse : `node outils/decider.js <lot.json> (--liste | accepte|refuse|a_valider (--recommandees | 001 …) | chercher | auto) [--essai]`.
+Règle « sourcée = validée » (décidée par l'utilisateur le 2026-11-25) : un contrôle de promesse existante (`controle_promesse`) dont `chercher` a retrouvé la source (niveau « trouvee », vérification « confirme », et pour une page web passage retrouvé sur la capture) est accepté automatiquement (`note_humaine` = « Validée automatiquement… », champ `decision_auto`). Les pistes, les sources non trouvées et les autres types de propositions restent à valider à la main. L'intégration au site (`integrer.js`) reste une étape séparée.
+
 Contrôle de la base héritée : `node outils/controle-existant.js` crée `mises_a_jour/<date>-controle/propositions.json` (type `controle_promesse`) pour les promesses sans source probante. Décision « accepte » = promesse confirmée ; « refuse » = promesse RETIRÉE du site (archivée dans `promesses_retirees` avec le motif = note_humaine). Même procédure d'intégration que les autres lots.
 
 Signalements des visiteurs : `node outils/supabase.js signalements [--tous]`. Un signalement est une piste à vérifier, jamais une source.
@@ -37,6 +40,10 @@ Rattrapage des captures des promesses existantes : `node outils/capturer.js --ex
 - Privé : WFAKIH/Presidentielle-2027 (ce dossier, tout le projet sauf .env, node_modules, page-complete.jpg).
 - Public : WFAKIH/comparateur-2027 — alimenté AUTOMATIQUEMENT par la GitHub Action `.github/workflows/export-public.yml` à chaque push sur main (liste blanche de `outils/exporter-public.js`, chemins locaux masqués, export bloqué si un secret est détecté). Ne jamais pousser à la main vers le dépôt public.
 - Netlify est relié au dépôt public : un push sur le privé → export public → mise en ligne.
+
+## Sources fiables et chiffrage (règles de l'utilisateur, 2026-11-25)
+- Source fiable = le site officiel de chaque candidat (`outils/sites-officiels.json`), pour la proposition comme pour son chiffrage ; y chercher en premier.
+- Le chiffrage ne concerne que les propositions qui entrent dans le calcul du budget. Les autres : « Nature du chiffrage » = « Sans incidence budgétaire », pas de montant, aucun coût réclamé. Détail : `equipe/REGLES_COMMUNES.md`.
 
 ## Principes non négociables
 Aucun classement ni jugement ; toute donnée a une source datée ; position de parti ≠ promesse du candidat ; pas d'addition de montants de périodes différentes ; vote de groupe ≠ vote individuel.

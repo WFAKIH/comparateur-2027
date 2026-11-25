@@ -5,6 +5,15 @@
 'use strict';
 const fs = require('fs');
 const { charger, similarite } = require('./donnees');
+let officiels = {};
+try { officiels = JSON.parse(fs.readFileSync(require('path').join(__dirname, 'sites-officiels.json'), 'utf8')); } catch { /* liste absente */ }
+const hote = u => { try { return new URL(u).hostname.replace(/^www\./, ''); } catch { return null; } };
+// Vrai si l'URL est sur un site officiel du candidat (null si le candidat n'a pas de site listé).
+function surSiteOfficiel(candidat, url) {
+  const sites = officiels[candidat];
+  if (!Array.isArray(sites) || !sites.length) return null;
+  return sites.map(s => hote(s.replace(/^doc:/, ''))).includes(hote(url));
+}
 
 const TYPES = ['ajout_promesse', 'correction_promesse', 'lien_mort', 'maj_inventaire', 'ajout_sondage', 'ajout_vote', 'ajout_recoupement', 'controle_promesse', 'autre'];
 const TABLES_PAR_TYPE = {
@@ -16,6 +25,8 @@ const CLE_ID = { promesses: 'ID', inventaire: 'Personnalité', sources: 'URL com
 const reDate = /^\d{4}-\d{2}-\d{2}$/;
 const reUrl = /^https?:\/\/[^\s]+$/;
 
+const estClassement = p => p.type === 'correction_promesse' && p.champ === 'Nature du chiffrage' && p.valeur_proposee === 'Sans incidence budgétaire';
+
 function valider(prop, db, toutes) {
   const err = [], alerte = [];
   const champsTable = t => Object.keys((db[t] || [])[0] || {});
@@ -23,7 +34,8 @@ function valider(prop, db, toutes) {
   if (!TYPES.includes(prop.type)) err.push(`type inconnu : ${prop.type}`);
   if (TABLES_PAR_TYPE[prop.type] && !TABLES_PAR_TYPE[prop.type].includes(prop.table)) err.push(`table « ${prop.table} » incompatible avec ${prop.type}`);
   // Contrôle d'une promesse existante : c'est la décision humaine qui tranche ; pas de citation exigée.
-  const controle = prop.type === 'controle_promesse';
+  // Reclassement « Sans incidence budgétaire » (règle de chiffrage) : classement, pas un fait sourcé ; pas de citation exigée.
+  const controle = prop.type === 'controle_promesse' || estClassement(prop);
   if (controle && !prop.id_existant) err.push('contrôle sans id_existant');
   if (!controle && !reUrl.test(prop.source_url || '')) err.push('source_url absente ou invalide');
   if (!controle && !String(prop.citation || '').trim()) err.push('citation absente');
@@ -55,6 +67,10 @@ function valider(prop, db, toutes) {
     if (p['Candidat'] && !connu) alerte.push(`personnalité absente de l'inventaire : ${p['Candidat']}`);
     if (typeof p['Valeur Md€'] === 'number' && (!p['Période / unité'] || p['Période / unité'] === 'ND')) err.push('montant chiffré sans période / unité');
     if (p['Valeur Md€'] !== undefined && p['Valeur Md€'] !== null && typeof p['Valeur Md€'] !== 'number') err.push('« Valeur Md€ » doit être un nombre ou absent');
+    // Règle : seules les propositions qui entrent dans le calcul du budget sont chiffrées.
+    if (p['Nature du chiffrage'] === 'Sans incidence budgétaire' && typeof p['Valeur Md€'] === 'number') err.push('« Sans incidence budgétaire » avec un montant : retirer le montant ou corriger la nature du chiffrage');
+    if (!p['Nature du chiffrage']) alerte.push('« Nature du chiffrage » vide : « Sans incidence budgétaire » si la proposition n\'entre pas dans le budget, sinon chiffrage du site officiel ou « Non chiffré »');
+    if (p['URL primaire'] && surSiteOfficiel(p['Candidat'], p['URL primaire']) === false) alerte.push('source hors du site officiel du candidat (outils/sites-officiels.json) : le justifier');
     const texte = p['Promesse (reformulation fidèle)'];
     const proches = db.promesses.filter(x => x['Candidat'] === p['Candidat'])
       .map(x => [x.ID, similarite(x['Promesse (reformulation fidèle)'], texte)]).filter(([, s]) => s >= 0.5)

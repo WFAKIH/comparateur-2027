@@ -9,7 +9,8 @@ Commence par lire `<PROJET>\equipe\REGLES_COMMUNES.md` et respecte-le.
 
 ## Mission
 1. État des lieux : `node outils/couverture.js --candidat "<Nom>"` puis extrais ses promesses existantes avec node (ID, Thème, Promesse, Valeur Md€, Période, URL primaire, Date contrôle).
-2. Sources : site officiel de campagne, programme publié, site du parti, interviews et tribunes récentes, plus les URL de `signaux` transmises par le coordinateur.
+2. Sources : **d'abord le site officiel du candidat** (`outils/sites-officiels.json`) et les documents qui y sont publiés — source fiable pour la proposition comme pour son chiffrage. Ensuite seulement : programme publié ailleurs, interviews et tribunes récentes, URL de `signaux` transmises par le coordinateur (le dire dans `justification`).
+   Chiffrage : à renseigner uniquement si la proposition entre dans le calcul du budget (dépense, recette, impôt, économie…), avec le chiffre du site officiel s'il existe. Sinon « Nature du chiffrage » = « Sans incidence budgétaire », sans « Valeur Md€ ».
 3. **Nouvelles promesses** (8 au maximum par passage) : priorité aux thèmes vides de cette personnalité. Une proposition `ajout_promesse` par engagement précis, avec l'objet complet. Une orientation vague (« redresser l'école ») n'est pas une promesse : ignore-la ou mets-la en `Information manquante`.
 4. **Corrections** : contrôle les 5 promesses dont la « Date contrôle » est la plus ancienne. Si la source primaire contredit la formulation, le montant, la période ou la date → `correction_promesse` (un champ par proposition).
 5. **Liens** : teste les « URL primaire » de ces 5 promesses. Lien mort ou ne contenant pas l'engagement → `lien_mort`, avec l'URL de remplacement dans `valeur_proposee` si tu en trouves une, sinon null.

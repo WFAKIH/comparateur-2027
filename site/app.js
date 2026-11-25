@@ -22,7 +22,10 @@
   const $profile = (p) => {const inv=inventory[p]||{}, f=fiche[p]||{}; return {party:inv['Organisation']||DB.promesses.find(x=>x['Candidat']===p)?.['Parti']||'',state:inv['Situation']||'',document:inv['Statut du programme']||'',count:DB.promesses.filter(x=>x['Candidat']===p).length, f};};
   const getSourceBadge=(p)=>p['Statut documentaire']||'Origine non précisée';
   const hasValue=p=>typeof p['Valeur Md€']==='number'&&Number.isFinite(p['Valeur Md€']);
-  const valueText=p=>hasValue(p) ? `${fmt(p['Valeur Md€'])} Md€${p['Période / unité'] && p['Période / unité']!=='ND' ? ' · '+p['Période / unité'] : ''}` : 'Montant non chiffré ici';
+  // Règle : seules les propositions qui entrent dans le budget sont chiffrées ; les autres sont « Sans incidence budgétaire ».
+  const sansIncidence=p=>p['Nature du chiffrage']==='Sans incidence budgétaire'&&!hasValue(p);
+  const valueText=p=>hasValue(p) ? `${fmt(p['Valeur Md€'])} Md€${p['Période / unité'] && p['Période / unité']!=='ND' ? ' · '+p['Période / unité'] : ''}` : sansIncidence(p) ? 'Sans incidence budgétaire' : 'Montant non chiffré ici';
+  const natureText=p=>sansIncidence(p) ? '' : (p['Nature du chiffrage']||'');
 
   function init(){
     $('hero-count').textContent=fmt(DB.promesses.length);
@@ -64,7 +67,7 @@
       <div class="proposal-index">ENGAGEMENT ${String(i+1).padStart(2,'0')} · ${esc(p['ID'])}</div>
       <div class="proposal-title">${esc(p['Promesse (reformulation fidèle)'])}</div>
       <dl class="proposal-info"><dt>Public concerné</dt><dd>${esc(p['Public concerné']||'À déterminer')}</dd></dl>
-      <dl class="proposal-info cost"><dt>Chiffrage</dt><dd><b>${esc(valueText(p))}</b><br>${esc(p['Nature du chiffrage']||'')} ${esc(p['Fiabilité du montant']||'')}</dd></dl>
+      <dl class="proposal-info cost"><dt>Chiffrage</dt><dd><b>${esc(valueText(p))}</b><br>${esc(natureText(p))} ${sansIncidence(p)?'':esc(p['Fiabilité du montant']||'')}</dd></dl>
       <dl class="proposal-info"><dt>Financement</dt><dd>${esc(financing)}</dd></dl>
       <dl class="proposal-info"><dt>Faisabilité</dt><dd>${esc(conditions||'Voie de réalisation non documentée')}</dd></dl>
       <dl class="proposal-info"><dt>À vérifier</dt><dd>${esc(p['Information manquante']||'Détails à compléter')}</dd></dl>
@@ -98,7 +101,7 @@
     const p=$('promise-person').value,t=$('promise-theme').value,q=$('promise-search').value.trim().toLocaleLowerCase('fr');
     const data=DB.promesses.filter(x=>(p==='Tous'||x['Candidat']===p)&&(t==='Tous'||x['Thème']===t)&&(!q||[x['Promesse (reformulation fidèle)'],x['Candidat'],x['Thème'],x['Public concerné'],x['Financement revendiqué']].join(' ').toLocaleLowerCase('fr').includes(q)));
     $('promise-count').textContent=`${data.length} résultat${data.length>1?'s':''} dans le registre`;
-    $('promise-results').innerHTML=data.slice(0,promisesVisible).map(x=>`<article class="promise-card"><div class="promise-labels"><span class="tag">${esc(x['Thème'])}</span><span class="tag neutral">${esc(x['Candidat'])}</span>${hasValue(x)?'<span class="tag warm">Montant mentionné</span>':''}</div><h3>${esc(x['Promesse (reformulation fidèle)'])}</h3><p class="micro"><strong>À qui ?</strong> ${esc(x['Public concerné']||'À préciser')}<br><strong>Coût / montant :</strong> ${esc(valueText(x))}${x['Nature du chiffrage']?' · '+esc(x['Nature du chiffrage']):''}<br><strong>Conditions :</strong> ${esc(x['Conditions de réalisation']||x['Voie juridique']||'Non documentées')}</p><div class="promise-metadata"><span><b>Origine :</b> ${esc(x['Statut documentaire']||'ND')}</span><span><b>Date :</b> ${esc(x['Date publication']||'ND')}</span></div><footer><span>Référence ${esc(x['ID'])}</span>${link(x['URL primaire'],'Document original ↗')}</footer></article>`).join('') || '<div class="no-data">Aucun résultat. Essayez un autre thème ou terme de recherche.</div>';
+    $('promise-results').innerHTML=data.slice(0,promisesVisible).map(x=>`<article class="promise-card"><div class="promise-labels"><span class="tag">${esc(x['Thème'])}</span><span class="tag neutral">${esc(x['Candidat'])}</span>${hasValue(x)?'<span class="tag warm">Montant mentionné</span>':''}</div><h3>${esc(x['Promesse (reformulation fidèle)'])}</h3><p class="micro"><strong>À qui ?</strong> ${esc(x['Public concerné']||'À préciser')}<br><strong>Coût / montant :</strong> ${esc(valueText(x))}${natureText(x)?' · '+esc(natureText(x)):''}<br><strong>Conditions :</strong> ${esc(x['Conditions de réalisation']||x['Voie juridique']||'Non documentées')}</p><div class="promise-metadata"><span><b>Origine :</b> ${esc(x['Statut documentaire']||'ND')}</span><span><b>Date :</b> ${esc(x['Date publication']||'ND')}</span></div><footer><span>Référence ${esc(x['ID'])}</span>${link(x['URL primaire'],'Document original ↗')}</footer></article>`).join('') || '<div class="no-data">Aucun résultat. Essayez un autre thème ou terme de recherche.</div>';
     $('load-promises').classList.toggle('hidden',promisesVisible>=data.length);
   }
   function renderCalculations(){

@@ -1,0 +1,42 @@
+{
+  "_note": "Sites officiels (candidat, campagne ou parti) explorés par « node outils/decider.js <lot> chercher ». Jamais de média ici. Ajouter un site = ajouter son adresse d'accueil. Préfixe « doc: » = hébergeur de documents du site officiel (source fiable, non exploré).",
+  "Jean-Luc Mélenchon": [
+    "https://melenchon2027.fr/"
+  ],
+  "Marine Le Pen": [
+    "https://rassemblementnational.fr/"
+  ],
+  "Édouard Philippe": [
+    "https://www.edouardphilippe.fr/"
+  ],
+  "Bruno Retailleau": [
+    "https://www.avecretailleau.fr/"
+  ],
+  "Raphaël Glucksmann": [
+    "https://glucks2027.fr/"
+  ],
+  "Marine Tondelier": [
+    "https://lesecologistes.fr/"
+  ],
+  "Gabriel Attal": [
+    "https://attalpresident.fr/"
+  ],
+  "François Ruffin": [
+    "https://nouspresident.fr/",
+    "https://francoisruffin.fr/"
+  ],
+  "Fabien Roussel": [
+    "https://www.pcf.fr/"
+  ],
+  "Nicolas Dupont-Aignan": [
+    "https://www.dupontaignan.fr/",
+    "https://www.debout-la-france.fr/"
+  ],
+  "David Lisnard": [
+    "https://unenouvelleenergie.fr/",
+    "doc:https://nouvelle-energie-media-prod.s3.fr-par.scw.cloud/"
+  ],
+  "Éric Zemmour": [
+    "https://www.ericzemmour.fr/"
+  ]
+}
