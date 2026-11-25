@@ -6,7 +6,7 @@
   <meta name="theme-color" content="#142f34">
   <meta name="description" content="Comparateur neutre et sourcé des programmes de la présidentielle française 2027 : propositions, coûts, financements et votes parlementaires.">
   <title>Le comparateur — Présidentielle 2027</title>
-  <link rel="stylesheet" href="styles.css">
+  <link rel="stylesheet" href="styles.css?v=20261125g">
 </head>
 <body>
   <a class="skip-link" href="#contenu">Aller au contenu</a>
@@ -17,7 +17,7 @@
         <span>LE <strong>COMPARATEUR</strong><small>PRÉSIDENTIELLE 2027</small></span>
       </a>
       <nav class="nav" aria-label="Navigation principale">
-        <a href="#comparer">Comparer</a><a href="#promesses">Les promesses</a><a href="#budget">Budget</a><a href="#votes">Les votes</a><a href="#sondages">Sondages</a>
+        <a href="#candidats">Candidats</a><a href="#chiffres">En chiffres</a><a href="#comparer">Comparer</a><a href="#promesses">Les promesses</a><a href="#budget">Budget</a><a href="#votes">Les votes</a><a href="#sondages">Sondages</a>
       </nav>
       <a class="header-method" href="#methode">Notre méthode <span aria-hidden="true">↗</span></a>
     </div>
@@ -42,6 +42,62 @@
             <div class="aside-note">Inventaire partiel : le nombre de mesures relevées ne mesure pas la qualité d’un programme.</div>
           </div>
         </div>
+      </div>
+    </section>
+
+    <section id="presentation" class="wrap intro-section" aria-labelledby="intro-titre">
+      <div class="intro-card">
+        <div class="intro-main">
+          <span class="kicker">LE BUT DE CE SITE</span>
+          <h2 id="intro-titre">Comparer les programmes de 2027 à partir de leurs sources, sans les juger.</h2>
+          <p>Ce site rassemble, pour chaque personnalité candidate ou pressentie à l’élection présidentielle de 2027, les propositions qu’elle a rendues publiques, leur coût lorsqu’il est annoncé, et ses votes passés au Parlement. Il ne classe personne et ne donne aucune note : il vous laisse comparer.</p>
+        </div>
+        <ol class="intro-steps" aria-label="Comment nous travaillons">
+          <li><strong>Sources officielles d’abord.</strong> Une proposition et son chiffrage sont repris du site officiel du candidat ou de son parti ; toute autre source est signalée.</li>
+          <li><strong>Reformulation fidèle.</strong> Chaque mesure est résumée sans l’élargir ni la durcir, avec une citation exacte et sa date.</li>
+          <li><strong>Preuve archivée.</strong> Chaque source est capturée (page, passage surligné, PDF) pour rester vérifiable même si elle disparaît.</li>
+          <li><strong>Double contrôle.</strong> Un vérificateur indépendant rouvre chaque source ; une relecture traque tout mot qui jugerait au lieu de décrire.</li>
+          <li><strong>Chiffres prudents.</strong> Seules les mesures qui pèsent sur le budget public sont chiffrées, avec la période annoncée ; on n’additionne jamais des montants de périodes différentes.</li>
+        </ol>
+        <a class="intro-link" href="#methode">Lire la méthode complète <span aria-hidden="true">↓</span></a>
+      </div>
+    </section>
+
+    <section id="candidats" class="section wrap" aria-labelledby="candidats-titre">
+      <div class="section-heading"><div><span class="kicker">LES PERSONNALITÉS</span><h2 id="candidats-titre">Qui se présente ?<br><span>Candidatures déclarées, pressenties ou retirées.</span></h2></div><p>Chaque tuile reprend la situation connue à la date indiquée, avec sa source. Une personnalité qui se retire ou se rallie reste visible : utilisez les filtres.</p></div>
+      <div class="tile-toolbar">
+        <div class="chip-group" role="group" aria-label="Filtrer les personnalités" id="candidats-filtres"></div>
+        <label class="sort-field">Trier par <select id="candidats-tri"><option value="nom">nom</option><option value="date">date de situation</option><option value="propositions">propositions relevées</option></select></label>
+      </div>
+      <div class="candidate-tiles" id="candidats-tuiles" aria-live="polite"></div>
+    </section>
+
+    <section id="chiffres" class="section wrap" aria-labelledby="chiffres-titre">
+      <div class="section-heading"><div><span class="kicker">EN CHIFFRES</span><h2 id="chiffres-titre">Ce que disent les données<br><span>du comparateur.</span></h2></div><p>Ces graphiques décrivent le contenu relevé ici, pas la qualité des programmes : un programme plus détaillé ou mieux documenté compte plus de propositions.</p></div>
+      <div class="chart-grid">
+        <article class="chart-card chart-wide" aria-labelledby="g-budget-titre">
+          <h3 id="g-budget-titre">Dépenses et recettes annoncées, par an</h3>
+          <p class="chart-sub">Montants annoncés par chaque candidat, en milliards d’euros par an. « Coûts » = dépenses nouvelles et baisses d’impôts ; « financements » = recettes nouvelles et économies. Cliquez sur une barre pour le détail des mesures.</p>
+          <div id="g-budget"></div>
+          <div id="g-budget-detail" class="chart-detail" aria-live="polite"></div>
+        </article>
+        <article class="chart-card" aria-labelledby="g-themes-cout-titre">
+          <h3 id="g-themes-cout-titre">Répartition des coûts annoncés par thème</h3>
+          <p class="chart-sub">Pour une personnalité à la fois : les montants ne sont comparables qu’à l’intérieur d’un même programme.</p>
+          <label class="sort-field">Personnalité <select id="g-camembert-candidat"></select></label>
+          <div id="g-camembert"></div>
+        </article>
+        <article class="chart-card" aria-labelledby="g-props-titre">
+          <h3 id="g-props-titre">Nombre de propositions relevées par personnalité</h3>
+          <p class="chart-sub">Reflète l’avancement de notre relevé et le degré de détail des programmes publiés.</p>
+          <div id="g-propositions"></div>
+        </article>
+        <article class="chart-card chart-wide" aria-labelledby="g-themes-titre">
+          <h3 id="g-themes-titre">Nombre de propositions par thème</h3>
+          <p class="chart-sub">Les thèmes les plus présents dans les programmes relevés.</p>
+          <label class="sort-field">Personnalité <select id="g-themes-candidat"><option value="">toutes</option></select></label>
+          <div id="g-themes"></div>
+        </article>
       </div>
     </section>
 
@@ -123,7 +179,7 @@
       </form>
     </section>
   </main>
-  <footer class="footer"><div class="wrap footer-inner"><div><span class="footer-brand">LE COMPARATEUR <b>2027</b></span><p>Un outil d'exploration sourcé et non partisan.</p></div><div class="footer-links"><a href="#comparer">Comparer</a><a href="#methode">Méthode</a><a href="#signaler">Signaler une erreur</a><a href="mentions-legales.html">Mentions légales</a><a href="https://www.conseil-constitutionnel.fr/" target="_blank" rel="noopener noreferrer">Conseil constitutionnel ↗</a><a href="https://www.commission-des-sondages.fr/" target="_blank" rel="noopener noreferrer">Commission des sondages ↗</a></div><span class="footer-edition"><span id="edition-court">ÉDITION : 18.11.2026</span><br>MISE À JOUR MANUELLE</span></div></footer>
-  <script src="config.js"></script><script src="data.js"></script><script src="app.js"></script>
+  <footer class="footer"><div class="wrap footer-inner"><div><span class="footer-brand">LE COMPARATEUR <b>2027</b></span><p>Un outil d'exploration sourcé et non partisan.</p></div><div class="footer-links"><a href="#candidats">Candidats</a><a href="#chiffres">En chiffres</a><a href="#comparer">Comparer</a><a href="#methode">Méthode</a><a href="#signaler">Signaler une erreur</a><a href="mentions-legales.html">Mentions légales</a><a href="https://www.conseil-constitutionnel.fr/" target="_blank" rel="noopener noreferrer">Conseil constitutionnel ↗</a><a href="https://www.commission-des-sondages.fr/" target="_blank" rel="noopener noreferrer">Commission des sondages ↗</a></div><span class="footer-edition"><span id="edition-court">ÉDITION : 18.11.2026</span><br>MISE À JOUR MANUELLE</span></div></footer>
+  <script src="config.js?v=20261125g"></script><script src="data.js?v=20261125g"></script><script src="app.js?v=20261125g"></script><script src="photos/photos.js?v=20261125g"></script><script src="accueil.js?v=20261125g"></script>
 </body>
 </html>
