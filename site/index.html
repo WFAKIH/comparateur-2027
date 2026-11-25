@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#142f34">
+  <meta name="description" content="Comparateur neutre et sourcé des programmes de la présidentielle française 2027 : propositions, coûts, financements et votes parlementaires.">
+  <title>Le comparateur — Présidentielle 2027</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <a class="skip-link" href="#contenu">Aller au contenu</a>
+  <header class="header">
+    <div class="header-inner wrap">
+      <a href="#accueil" class="brand" aria-label="Le comparateur, accueil">
+        <span class="brand-icon" aria-hidden="true">≡</span>
+        <span>LE <strong>COMPARATEUR</strong><small>PRÉSIDENTIELLE 2027</small></span>
+      </a>
+      <nav class="nav" aria-label="Navigation principale">
+        <a href="#comparer">Comparer</a><a href="#promesses">Les promesses</a><a href="#budget">Budget</a><a href="#votes">Les votes</a><a href="#sondages">Sondages</a>
+      </nav>
+      <a class="header-method" href="#methode">Notre méthode <span aria-hidden="true">↗</span></a>
+    </div>
+  </header>
+
+  <main id="contenu">
+    <section id="accueil" class="hero">
+      <div class="hero-pattern" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+      <div class="wrap hero-body">
+        <div class="eyebrow"><span class="pulse"></span> UN OUTIL INDÉPENDANT D’EXPLORATION DOCUMENTAIRE <span class="eyebrow-line"></span> <span id="edition-long">ÉDITION DU 18 NOVEMBRE 2026</span></div>
+        <div class="hero-columns">
+          <div><h1>Des promesses.<br><em>Des faits.</em><br>À vous de comparer.</h1>
+            <p class="hero-copy">Qu’annonce chaque candidat ? Qui en bénéficierait ? Combien cela coûterait, et que disent les votes passés ? Des réponses lisibles, avec leur source et leurs limites.</p>
+            <a class="btn btn-light" href="#comparer">Commencer la comparaison <span aria-hidden="true">↗</span></a>
+          </div>
+          <div class="hero-aside" aria-label="Informations sur le jeu de données">
+            <div class="aside-top">DANS CETTE PREMIÈRE VERSION</div>
+            <div class="stat-number" id="hero-count">262</div><div class="stat-sub">engagements et orientations relevés</div>
+            <div class="aside-sep"></div>
+            <div class="aside-small"><strong id="hero-candidates">12</strong><span>personnalités étudiées</span></div>
+            <div class="aside-small"><strong id="hero-themes">23</strong><span>thèmes recensés</span></div>
+            <div class="aside-note">Inventaire partiel : le nombre de mesures relevées ne mesure pas la qualité d’un programme.</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="comparer" class="section wrap">
+      <div class="section-heading"><div><span class="kicker">01 / LE FACE-À-FACE</span><h2>Comparer deux projets<br><span>sur le même sujet.</span></h2></div><p>Choisissez librement les deux personnes et le thème. Les propositions sont présentées avec leurs conditions de réalisation.</p></div>
+      <div class="selector-panel">
+        <div class="selectors">
+          <div class="select-field"><label for="candidate-a">CANDIDAT·E A</label><select id="candidate-a"></select></div>
+          <div class="versus" aria-hidden="true">↔</div>
+          <div class="select-field"><label for="candidate-b">CANDIDAT·E B</label><select id="candidate-b"></select></div>
+          <div class="select-field theme-field"><label for="compare-theme">SUR QUEL SUJET ?</label><select id="compare-theme"></select></div>
+        </div>
+        <div class="selector-footer"><span id="compare-summary">Comparaison documentaire</span><button id="share-link" class="text-button" type="button">Copier le lien de cette comparaison ↗</button></div>
+      </div>
+      <div class="compare-top"><h3 id="compare-title">Leurs propositions</h3><div class="small-note">Source et date accessibles sur chaque fiche</div></div>
+      <div class="compare-grid" id="compare-results" aria-live="polite"></div>
+      <div class="compare-note" role="note"><strong>À lire avant de comparer.</strong> Une mesure absente du registre signifie « non extraite dans cette édition », pas « le candidat n’en parle pas ». Une somme annoncée sans période vérifiée n’est pas additionnée à d’autres montants.</div>
+      <div class="coverage" id="coverage-chart"><div class="coverage-h"><strong>Quels thèmes ont été documentés dans cette sélection ?</strong><span>Volume d’extraction, pas une note de programme</span></div><div id="coverage-bars"></div></div>
+    </section>
+
+    <section id="promesses" class="section section-tint">
+      <div class="wrap">
+        <div class="section-heading"><div><span class="kicker">02 / LA BASE DOCUMENTAIRE</span><h2>Explorer les <span>engagements.</span></h2></div><p>Un registre consultable candidat par candidat, en conservant l’origine et la date de chaque proposition.</p></div>
+        <div class="explorer-controls"><div class="search-wrap"><span aria-hidden="true">⌕</span><input id="promise-search" type="search" placeholder="Rechercher : SMIC, nucléaire, fraude, école…" aria-label="Rechercher une promesse"></div><select aria-label="Filtrer par personne" id="promise-person"></select><select aria-label="Filtrer par thème" id="promise-theme"></select></div>
+        <div class="explorer-toolbar"><span id="promise-count"></span><span>Les montants sont ceux des documents cités, pas des expertises indépendantes.</span></div>
+        <div class="promises-list" id="promise-results" aria-live="polite"></div>
+        <div class="load-row"><button class="btn btn-outline" id="load-promises" type="button">Afficher plus de promesses <span aria-hidden="true">↓</span></button></div>
+      </div>
+    </section>
+
+    <section id="budget" class="section wrap">
+      <div class="section-heading"><div><span class="kicker">03 / LES ORDRES DE GRANDEUR</span><h2>Manipuler les <span>hypothèses.</span></h2></div><p>Les graphiques ci-dessous illustrent des calculs particuliers. Ils ne prétendent pas représenter le coût total d’un programme.</p></div>
+      <div class="sim-grid">
+        <div class="sim-card"><div class="sim-head"><span class="pill">CONTRE-BUDGET RN 2026</span><h3>TVA énergie et recette antifraude</h3><p>Faites varier la part des 3,5 Md€ de recouvrement supplémentaire effectivement obtenue et affectée à cette mesure.</p></div>
+          <div class="sim-content"><div class="slider-head"><label for="fraud-slider">Réalisation de la recette annoncée</label><strong id="fraud-value">100 %</strong></div><input type="range" id="fraud-slider" min="0" max="150" step="5" value="100"><div class="mini-labels"><span>0 %</span><span>150 %</span></div>
+            <div class="budget-bars"><div class="barrow"><span>Coût annoncé de la mesure</span><b>10,96 Md€/an</b><div class="track"><i class="bar-cost" style="width:100%"></i></div></div><div class="barrow"><span>Recette réalisée et affectée</span><b id="fraud-amount">3,50 Md€/an</b><div class="track"><i class="bar-fin" id="fraud-bar"></i></div></div></div>
+            <div class="sim-result"><span>Besoin de financement restant<br><small>pour ces deux postes seulement</small></span><strong id="fraud-gap">7,46 <small>Md€/an</small></strong></div>
+            <p class="sim-caution">La recette antifraude ne peut pas financer simultanément plusieurs promesses. L’attribution intégrale ici est une hypothèse, pas une garantie de recouvrement.</p>
+            <a href="https://rassemblementnational.fr/documents/GRN-CONTRE-BUDGET-2026.pdf" target="_blank" rel="noopener noreferrer">Source : contre-budget RN 2026 ↗</a>
+          </div></div>
+        <div class="sim-card"><div class="sim-head"><span class="pill">PROGRAMME LFI 2027</span><h3>Revalorisation du SMIC net</h3><p>Calculez un écart de salaire mensuel théorique. Il ne s’agit ni d’un chiffrage budgétaire ni du revenu disponible final.</p></div>
+          <div class="sim-content"><div class="slider-head"><label for="smic-slider">SMIC net de référence (modifiable)</label><strong id="smic-value">1 477,93 €</strong></div><input type="range" id="smic-slider" min="1350" max="1700" value="1477.93" step="0.01"><div class="mini-labels"><span>1 350 €</span><span>1 700 €</span></div>
+            <div class="mini-compare"><div><span>Référence choisie</span><strong id="smic-before">1 477,93 €</strong></div><div><span>Objectif annoncé</span><strong>1 700 €</strong></div></div><div class="sim-result"><span>Écart théorique<br><small>pour un salarié à temps plein</small></span><strong id="smic-gap">+222,07 <small>€/mois</small></strong></div><p class="sim-caution">Le coût employeur et les effets sur cotisations, aides, impôts et emploi ne sont pas calculés ici.</p><a href="https://melenchon2027.fr/programme/livre" target="_blank" rel="noopener noreferrer">Source : programme LFI 2027 ↗</a></div>
+        </div>
+      </div>
+      <div class="budget-foot"><span class="budget-dot"></span> Pour les autres mesures : montant non documenté ≠ coût nul. Les unités « par an », « sur cinq ans » et « une fois » restent séparées.</div>
+    </section>
+
+    <section id="votes" class="section section-deep">
+      <div class="wrap"><div class="section-heading light"><div><span class="kicker">04 / LES ACTES PARLEMENTAIRES</span><h2>Des paroles…<br><span>aux scrutins.</span></h2></div><p>Rapprochements factuels avec des votes nominatifs français ou européens. Un vote sur un texte entier ne vaut pas position sur chacun de ses articles.</p></div>
+        <div class="vote-toolbar"><label for="vote-person">CONSULTER LES SCRUTINS ASSOCIÉS À</label><select id="vote-person"></select><span id="votes-count"></span></div>
+        <div id="votes-results" class="votes-list"></div>
+        <div class="vote-scrutin-box"><div class="vote-scrutin-top"><div><span class="kicker">ZOOM SUR UN SCRUTIN</span><h3>Votes des groupes enregistrés</h3></div><select id="scrutin-selector" aria-label="Choisir un scrutin"></select></div><div id="scrutin-details"></div><p class="votes-legend"><span><i class="dot for"></i> Pour</span><span><i class="dot against"></i> Contre</span><span><i class="dot abst"></i> Abstentions</span></p><p class="context-vote">Les effectifs concernent les votes enregistrés au scrutin considéré, pas l'ensemble des sièges. Les groupes peuvent avoir changé de composition ou de nom depuis la date du vote.</p></div>
+      </div>
+    </section>
+
+    <section id="sondages" class="section wrap"><div id="sondages-reserve" class="compare-note hidden" role="note"><strong>Section suspendue.</strong> Conformément à la loi n° 77-808 du 19 juillet 1977, aucun sondage électoral n’est publié la veille et le jour du scrutin.</div><div id="sondages-contenu"><div class="section-heading"><div><span class="kicker">05 / PHOTOGRAPHIES D’OPINION</span><h2>Les sondages,<br><span>sans les mélanger.</span></h2></div><p>Chaque graphique présente une configuration exacte testée par un institut. Ce ne sont pas des prédictions électorales.</p></div>
+      <div class="poll-controls"><label for="poll-selector">SÉLECTIONNER UNE ENQUÊTE ET UN SCÉNARIO</label><select id="poll-selector"></select></div>
+      <div class="poll-layout"><div class="poll-chart"><div class="poll-chart-head"><h3 id="poll-title">Intentions de vote</h3><span id="poll-base">Parmi les exprimés</span></div><div id="poll-bars" aria-live="polite"></div></div><div class="poll-info" id="poll-info"></div></div></div>
+    </section>
+
+    <section id="methode" class="section section-method"><div class="wrap method-flex"><div><span class="kicker">06 / COMMENT LIRE CES DONNÉES</span><h2>La méthode,<br><span>avant le verdict.</span></h2><p>Ce site ne donne aucune note ni classement de candidats. Son rôle est de permettre de vérifier les documents et de constater ce qui manque encore.</p></div><div class="method-list">
+      <div><span>01</span><p><strong>Document ≠ promesse présidentielle.</strong> Un contre-budget, un programme de parti et une annonce de candidat sont identifiés séparément.</p></div>
+      <div><span>02</span><p><strong>Montant publié ≠ montant validé.</strong> Un chiffrage est attribué à sa source et à sa période. Les coûts indéterminés restent « ND ».</p></div>
+      <div><span>03</span><p><strong>Vote de groupe ≠ vote individuel.</strong> L'abstention, l'absence, le vote délégué et les textes composites sont distingués autant que le permet le relevé.</p></div>
+      <div><span>04</span><p><strong>Une base évolutive, non exhaustive.</strong> Les données proviennent d’un audit documentaire mis à jour le <span id="edition-methode">18 novembre 2026</span>. Elles ne se synchronisent pas automatiquement avec les campagnes.</p></div>
+    </div></div></section>
+    <section id="signaler" class="section wrap"><div class="section-heading"><div><span class="kicker">07 / UNE ERREUR ?</span><h2>Signaler une erreur<br><span>ou une source.</span></h2></div><p>Une promesse mal reformulée, un lien mort, un chiffre inexact ? Indiquez-le avec une source : chaque signalement est vérifié avant toute correction.</p></div>
+      <form id="signalement" class="report-form" novalidate>
+        <div class="report-grid">
+          <div class="select-field"><label for="sig-ref">RÉFÉRENCE CONCERNÉE (FACULTATIF)</label><input id="sig-ref" name="reference" maxlength="200" placeholder="Ex. P0042, ou le nom de la personnalité"></div>
+          <div class="select-field"><label for="sig-source">SOURCE À L’APPUI (FACULTATIF)</label><input id="sig-source" name="source_url" type="url" maxlength="500" placeholder="https://…"></div>
+        </div>
+        <div class="select-field"><label for="sig-message">VOTRE SIGNALEMENT</label><textarea id="sig-message" name="message" required minlength="10" maxlength="2000" rows="5" placeholder="Décrivez l’erreur et la correction proposée."></textarea></div>
+        <div class="select-field"><label for="sig-contact">CONTACT (FACULTATIF)</label><input id="sig-contact" name="contact" maxlength="200" placeholder="Adresse e-mail si vous souhaitez une réponse"></div>
+        <input class="hp" name="site_web" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <div class="report-foot"><p class="micro">Le contact est facultatif ; il sert uniquement à vous répondre et est supprimé après traitement. Voir les <a href="mentions-legales.html">mentions légales</a>.</p><button class="btn btn-light report-btn" type="submit">Envoyer le signalement</button></div>
+        <p id="sig-etat" class="report-state" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+  <footer class="footer"><div class="wrap footer-inner"><div><span class="footer-brand">LE COMPARATEUR <b>2027</b></span><p>Un outil d'exploration sourcé et non partisan.</p></div><div class="footer-links"><a href="#comparer">Comparer</a><a href="#methode">Méthode</a><a href="#signaler">Signaler une erreur</a><a href="mentions-legales.html">Mentions légales</a><a href="https://www.conseil-constitutionnel.fr/" target="_blank" rel="noopener noreferrer">Conseil constitutionnel ↗</a><a href="https://www.commission-des-sondages.fr/" target="_blank" rel="noopener noreferrer">Commission des sondages ↗</a></div><span class="footer-edition"><span id="edition-court">ÉDITION : 18.11.2026</span><br>MISE À JOUR MANUELLE</span></div></footer>
+  <script src="config.js"></script><script src="data.js"></script><script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,5 @@
+# Configuration Netlify : seul le dossier site/ est publié.
+# Les en-têtes de sécurité et de cache sont dans site/_headers (pris en compte aussi par Netlify Drop).
+[build]
+  publish = "site"
+  command = ""

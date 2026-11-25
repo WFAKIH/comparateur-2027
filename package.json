@@ -1,0 +1,12 @@
+{
+  "name": "comparateur-2027",
+  "private": true,
+  "description": "Outils de veille et d'archivage des sources du comparateur présidentielle 2027",
+  "scripts": {
+    "couverture": "node outils/couverture.js",
+    "source": "node outils/source.js"
+  },
+  "dependencies": {
+    "playwright-core": "1.65.1"
+  }
+}
