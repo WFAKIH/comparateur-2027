@@ -83,6 +83,18 @@ create policy "depot public de signalements" on public.signalements
   for insert to anon with check (statut = 'nouveau' and reponse is null);
 grant insert (reference, message, source_url, contact) on public.signalements to anon;
 
+-- Droits explicites : le projet n'accorde PAS automatiquement l'accès API aux nouvelles tables
+-- (option « Grant API access to new tables automatically » décochée). On donne exactement le nécessaire.
+grant usage on schema public to anon, service_role;
+grant select, insert, update, delete on public.propositions to service_role;
+grant select on public.a_valider to service_role;
+grant select, insert, update, delete on public.signalements to service_role;
+grant usage, select on sequence public.signalements_id_seq to service_role;
+grant usage on sequence public.signalements_id_seq to anon;   -- nécessaire pour l'identifiant auto du dépôt public
+revoke all on public.propositions from anon, authenticated;
+revoke all on public.a_valider from anon, authenticated;
+revoke select, update, delete on public.signalements from anon, authenticated;
+
 -- 3. Captures des sources (bucket privé) -----------------------------------------
 insert into storage.buckets (id, name, public)
 values ('preuves', 'preuves', false)
