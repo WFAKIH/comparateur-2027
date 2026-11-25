@@ -120,9 +120,12 @@ async function main() {
   // 4. Publication
   if (args.includes('--sans-publication') || e.publication_automatique === false) { log('Publication non faite (option ou interrupteur) : commit et push à faire à la main.'); ecrireJournaux(); return; }
   if (git('rev-parse', '--abbrev-ref', 'HEAD').stdout.trim() !== 'main') arret('la branche courante n\'est pas main');
-  git('add', '-A');
+  // Seulement ce que l'automate produit : données du site, lots, preuves. Le code et les règles restent humains.
+  git('reset', '-q');
+  git('add', '--', 'site/data.js', 'site/data.json', 'mises_a_jour', 'preuves');
   const statut = git('diff', '--cached', '--name-only').stdout;
-  if (/(^|\/)\.env$/m.test(statut)) arret('.env serait commité');
+  if (/(^|\/)\.env/m.test(statut)) arret('.env serait commité');
+  if (statut.split('\n').filter(Boolean).some(f => !/^(site\/data\.js|site\/data\.json|mises_a_jour\/|preuves\/)/.test(f))) arret('un fichier hors données, lots et preuves serait commité');
   const msg = `Intégration automatique du ${aujourdhui()} : ${integrees} proposition(s) (politique de validation)\n\n` +
     journal.filter(l => /^== |par règle|Laissées/.test(l.trim())).map(l => l.trim()).join('\n') +
     '\n\nCo-Authored-By: Claude Opus 5.5 <noreply@anthropic.com>';

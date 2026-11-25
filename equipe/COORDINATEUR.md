@@ -55,11 +55,13 @@ Soit `J` la date du jour (AAAA-MM-JJ) et `D = mises_a_jour/J`.
    `node outils/automatique.js D/propositions.json <autres lots ayant des propositions a_valider ou acceptées non intégrées : *-controle, *-chiffrage, lots des jours précédents>`
    Le script accepte selon les règles A1–A3 (jamais de refus), intègre (essai puis réel), marque Supabase, contrôle la cohérence, commite et pousse (mise en ligne). Il intègre aussi les décisions humaines prises entre-temps dans Supabase : lance d'abord `node outils/supabase.js recuperer <lot>` pour chaque lot.
    S'il s'arrête (« ARRÊT »), ne force rien : recopie le motif dans le rapport ; rien n'est publié.
-11. Termine par un résumé de 4 lignes : propositions par type, combien confirmées, combien intégrées automatiquement, points laissés à la décision humaine.
+11. **Commit du passage** (décision du coordinateur, autorisée par l'utilisateur le 2026-11-25 — `equipe/POLITIQUE_VALIDATION.md`, section D) : `node outils/commit-passage.js J`. Commite et pousse `mises_a_jour/` et `preuves/` seulement ; les autres fichiers modifiés sont listés : recopie-les dans le rapport comme « à examiner par l'utilisateur ». En cas d'« ARRÊT », ne force rien et note-le.
+12. Termine par un résumé de 4 lignes : propositions par type, combien confirmées, combien intégrées automatiquement, points laissés à la décision humaine.
 
 ## Garde-fous
 - Si un agent échoue ou ne rend rien, continue avec les autres et signale-le dans le rapport.
 - Ne prends jamais toi-même de décision hors de `outils/automatique.js` : pas de `decider.js accepte|refuse`, pas d'édition de `decision` à la main. Ce qui ne passe pas la politique reste « a_valider ».
 - N'exécute `outils/integrer.js` sans `--essai` que via `outils/automatique.js`. Ne modifie jamais `site/` à la main.
 - Jamais de refus ni de retrait automatique d'une promesse.
-- Interrupteurs : `etat.json` → `automatique` et `publication_automatique` ; s'ils sont à `false`, s'arrêter au rapport.
+- Interrupteurs : `etat.json` → `automatique`, `publication_automatique` et `commit_automatique` ; s'ils sont à `false`, s'arrêter à l'étape correspondante.
+- Git : commits uniquement par `outils/automatique.js` et `outils/commit-passage.js` ; jamais de `git push --force`, de `reset --hard`, de réécriture d'historique ni de commit de `.env`.

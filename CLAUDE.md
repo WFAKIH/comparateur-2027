@@ -13,6 +13,7 @@ Site statique neutre et sourcé comparant les programmes des prétendants à la 
 
 ## Validation automatique (décision de l'utilisateur, 2026-11-25)
 Les propositions conformes à `equipe/POLITIQUE_VALIDATION.md` (règles A1 recommandée, A2 sourcée sur le site officiel, A3 sans incidence budgétaire) sont acceptées, intégrées, commitées et poussées (mises en ligne) sans intervention : `node outils/automatique.js <lots…> [--essai] [--sans-publication]`. Jamais de refus automatique. Interrupteurs `automatique` / `publication_automatique` dans `mises_a_jour/etat.json`. La tâche planifiée quotidienne l'exécute (étape 10 de `equipe/COORDINATEUR.md`).
+Le coordinateur peut aussi décider seul de commiter et pousser le travail de son passage (`mises_a_jour/`, `preuves/` uniquement) : `node outils/commit-passage.js AAAA-MM-JJ` (étape 11 ; interrupteur `commit_automatique`). Code, règles et `site/` hors automate restent des décisions humaines.
 
 ## Valider, intégrer, publier (décisions humaines)
 L'utilisateur valide dans Supabase (Table Editor > vue `a_valider` ou table `propositions` : colonne `decision` = accepte / refuse, `note_humaine` facultative). Quand il demande d'intégrer (« intègre les validations du 25 », « publie ») :

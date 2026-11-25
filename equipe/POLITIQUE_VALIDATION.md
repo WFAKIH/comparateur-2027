@@ -36,4 +36,11 @@ Garde-fous (arrêt avant le push, rien n'est publié) :
 - le nombre de promesses diminue ou les données ne se chargent plus ;
 - plus de 150 propositions intégrées dans le même passage ;
 - l'interrupteur `automatique` ou `publication_automatique` est à `false`.
+## D. Décisions de commit du coordinateur (autorisation de l'utilisateur du 2026-11-25)
+Le coordinateur décide seul de commiter et pousser le travail de son passage, avec `node outils/commit-passage.js AAAA-MM-JJ` en fin de procédure (même s'il n'y a eu aucune décision automatique) :
+- seulement `mises_a_jour/` (rapport, lots, état, journaux) et `preuves/` (captures, textes, PDF) ; ces dossiers ne partent pas vers le dépôt public ;
+- jamais `site/` (qui ne change que par `outils/automatique.js`), ni `outils/`, `equipe/`, `.claude/`, `CLAUDE.md` : tout changement de code ou de règles reste une décision humaine, signalé dans le rapport ;
+- jamais de fichier sensible (`.env`, clés) ; branche `main` uniquement ; pas de `--force`, pas de réécriture d'historique ;
+- interrupteur : `etat.json` → `"commit_automatique": false` ; le push suit aussi `publication_automatique`.
+
 Chaque décision automatique porte `note_humaine` = « Décision automatique (règle A…) » et `decision_auto` = date ; le journal est écrit dans `decisions-auto.md` à côté du lot.
